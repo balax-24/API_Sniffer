@@ -1,0 +1,7 @@
+{
+  "manifest_version": 3,
+  "name": "API Sniffer Pro",
+  "version": "2.0.0",
+  "description": "Advanced API discovery panel: live capture, cURL (standard/optimized), HAR 1.2, multi-language export, stats, replay and deep search for authorized testing.",
+  "devtools_page": "devtools.html"
+}

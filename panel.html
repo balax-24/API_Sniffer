@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>API Sniffer Pro</title>
+<style>
+:root {
+  --bg:#1e1e1e; --panel:#252526; --border:#3c3c3c; --border2:#454545;
+  --text:#d4d4d4; --dim:#9a9a9a; --bright:#fff;
+  --good:#4ec9b0; --warn:#dcdcaa; --bad:#f48771; --accent:#0e639c;
+  --accent2:#1177bb; --row-hover:#2a2d2e; --row-sel:#1e3d55;
+  --code-bg:#111; --star:#f2c94c;
+}
+* { box-sizing:border-box; }
+html,body { height:100%; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:12px/1.4 "Segoe UI",Consolas,monospace; overflow:hidden; }
+button { background:#333; color:var(--text); border:1px solid var(--border);
+  padding:4px 10px; cursor:pointer; border-radius:3px; font:inherit; }
+button:hover { background:#3c3c3c; }
+button:disabled { opacity:.45; cursor:not-allowed; }
+button.primary { background:var(--accent); border-color:var(--accent2); }
+button.primary:hover { background:var(--accent2); }
+input[type=text],input[type=number],select,textarea {
+  background:#333; color:var(--text); border:1px solid var(--border);
+  padding:4px 8px; border-radius:3px; font:inherit; }
+textarea { font-family:Consolas,monospace; }
+input[type=checkbox] { accent-color:var(--accent2); vertical-align:middle; }
+label { color:var(--dim); }
+label:hover { color:var(--text); }
+.hidden { display:none !important; }
+.sep { width:1px; height:20px; background:var(--border); margin:0 4px; }
+
+/* ---------- layout ---------- */
+#app { display:flex; flex-direction:column; height:100vh; }
+.toolbar { display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+  padding:6px 8px; background:var(--panel); border-bottom:1px solid var(--border); }
+#btnStart { background:#1b5e20; }
+#btnStart:hover { background:#237a29; }
+#btnStop  { background:#7f1d1d; }
+#btnStop:hover { background:#982525; }
+#stats { padding:3px 8px; color:var(--dim); border-bottom:1px solid var(--border);
+  display:flex; gap:16px; flex-wrap:wrap; font-size:11px; }
+#stats b { color:var(--text); font-weight:600; }
+#flash { color:var(--good); margin-left:auto; min-width:80px; text-align:right; }
+#flash.err { color:var(--bad); }
+
+/* ---------- tabs ---------- */
+nav.tabs { display:flex; background:var(--panel); border-bottom:1px solid var(--border); }
+nav.tabs button { border:none; background:transparent; padding:7px 14px;
+  border-bottom:2px solid transparent; color:var(--dim); }
+nav.tabs button:hover { color:var(--text); background:#2a2d2e; }
+nav.tabs button.active { color:var(--bright); border-bottom-color:var(--accent2); background:#2a2d2e; }
+section.tab { flex:1; overflow:auto; display:flex; flex-direction:column; min-height:0; }
+
+/* ---------- log table ---------- */
+#logWrap { flex:1; overflow:auto; min-height:0; }
+table#log { width:100%; border-collapse:collapse; }
+th,td { text-align:left; padding:4px 8px; border-bottom:1px solid var(--border);
+  white-space:nowrap; font-size:12px; }
+th { background:var(--panel); color:var(--dim); position:sticky; top:0; z-index:2;
+  cursor:pointer; user-select:none; }
+th:hover { color:var(--text); }
+th .arrow { color:var(--accent2); }
+tbody tr { cursor:pointer; }
+tbody tr:hover { background:var(--row-hover); }
+tbody tr.selected { background:var(--row-sel); }
+tbody tr.fav td:first-child { box-shadow:inset 3px 0 0 var(--star); }
+tbody tr.hit-flash { animation:flashrow .6s; }
+@keyframes flashrow { 0% { background:#3a3a10; } 100% { background:transparent; } }
+.cell-seq { color:var(--dim); width:34px; }
+.cell-check { width:22px; }
+.cell-check input { margin:0; }
+.cell-method { width:70px; }
+.cell-status { width:56px; font-weight:600; }
+.cell-type { width:110px; color:var(--dim); }
+.cell-host { color:var(--warn); max-width:240px; overflow:hidden; text-overflow:ellipsis; }
+.cell-path { max-width:340px; overflow:hidden; text-overflow:ellipsis; }
+.cell-size { width:80px; text-align:right; }
+.cell-time { width:70px; text-align:right; color:var(--dim); }
+.cell-time.bad { color:var(--bad); }
+.cell-actions { width:120px; }
+.method { font-weight:700; padding:1px 6px; border-radius:3px; font-size:11px; }
+.m-get{color:var(--good)} .m-post{color:var(--warn)} .m-put,.m-patch{color:#c586c0}
+.m-delete{color:var(--bad)} .m-options{color:#9cdcfe} .m-head{color:#ce9178}
+.star-btn { background:none; border:none; color:var(--dim); padding:0 3px; font-size:13px; cursor:pointer; }
+.star-btn.on { color:var(--star); }
+.badge { display:inline-block; padding:0 5px; border-radius:8px; font-size:10px;
+  background:#333; color:var(--dim); margin-left:4px; }
+.badge.red { background:#5c1a1a; color:#f48771; }
+.badge.green { background:#1b5e20; color:#4ec9b0; }
+
+/* ---------- bulk bar ---------- */
+#bulkBar { display:flex; gap:8px; align-items:center; padding:4px 8px;
+  background:#2a2a20; border-bottom:1px solid var(--border); font-size:11px; }
+#bulkBar .count { color:var(--warn); }
+
+/* ---------- pagination ---------- */
+#pager { display:flex; gap:8px; align-items:center; padding:4px 8px;
+  background:var(--panel); border-top:1px solid var(--border); font-size:11px; }
+#pager .spacer { flex:1; }
+
+/* ---------- detail ---------- */
+#detail { flex:1; overflow:auto; padding:0; }
+#detail .dhead { padding:10px 12px; border-bottom:1px solid var(--border);
+  background:var(--panel); position:sticky; top:0; z-index:2; }
+#detail h3 { margin:0; font-size:13px; color:var(--bright); word-break:break-all; }
+#detail .dmeta { color:var(--dim); font-size:11px; margin-top:4px; display:flex;
+  gap:12px; flex-wrap:wrap; }
+#detail .dtabs { display:flex; gap:2px; padding:6px 8px 0; background:var(--panel);
+  border-bottom:1px solid var(--border); }
+#detail .dtabs button { border:none; background:transparent; color:var(--dim);
+  padding:5px 12px; border-radius:3px 3px 0 0; }
+#detail .dtabs button.active { background:var(--bg); color:var(--bright); }
+#dContent { padding:10px 12px; }
+#dContent h4 { margin:14px 0 4px; color:var(--good); text-transform:uppercase;
+  font-size:11px; letter-spacing:.5px; }
+table.kv { width:100%; border-collapse:collapse; }
+table.kv td { white-space:normal; word-break:break-all; padding:3px 8px; }
+table.kv td:first-child { color:var(--dim); width:28%; }
+table.kv tr:hover td { background:var(--row-hover); }
+pre.code { background:var(--code-bg); border:1px solid var(--border); padding:8px;
+  overflow:auto; max-height:320px; white-space:pre-wrap; word-break:break-all;
+  margin:4px 0; font-family:Consolas,monospace; font-size:11.5px; }
+pre.code.raw { max-height:50vh; }
+img.resp-img { max-width:100%; border:1px solid var(--border); background:#fff; }
+.search-bar { display:flex; gap:6px; align-items:center; margin:4px 0; }
+.search-bar input { flex:1; }
+
+/* ---------- curl / har tabs ---------- */
+.export-toolbar { display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+  padding:8px; border-bottom:1px solid var(--border); }
+#curlOutput { flex:1; width:100%; border:none; border-radius:0; background:var(--code-bg);
+  color:#9cdcfe; padding:10px; resize:none; outline:none; }
+#curlOutput::selection { background:#264f78; }
+.opt-row { display:flex; align-items:center; gap:8px; padding:4px 10px; }
+.opt-row label { display:flex; align-items:center; gap:6px; }
+.har-options { padding:12px; }
+.card { background:var(--panel); border:1px solid var(--border); border-radius:4px;
+  padding:12px; margin-bottom:12px; }
+.card h4 { margin:0 0 8px; color:var(--bright); font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+
+/* ---------- stats ---------- */
+#statsGrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:8px; padding:10px; }
+.stat-card { background:var(--panel); border:1px solid var(--border); border-radius:4px;
+  padding:10px; }
+.stat-card .k { color:var(--dim); font-size:11px; text-transform:uppercase; }
+.stat-card .v { font-size:20px; font-weight:700; color:var(--bright); margin-top:2px; }
+.stat-card .v.good { color:var(--good); } .stat-card .v.warn { color:var(--warn); }
+.stat-card .v.bad { color:var(--bad); }
+.bar-row { display:flex; align-items:center; gap:8px; margin:3px 0; font-size:11px; }
+.bar-row .lbl { width:110px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bar-row .track { flex:1; background:#111; height:12px; border-radius:2px; overflow:hidden; }
+.bar-row .fill { height:100%; background:var(--accent); }
+.bar-row .cnt { width:56px; text-align:right; color:var(--dim); }
+.bar-row .fill.good{background:var(--good)} .bar-row .fill.warn{background:var(--warn)}
+.bar-row .fill.bad{background:var(--bad)}
+
+/* ---------- settings ---------- */
+#settingsForm { max-width:720px; padding:12px; }
+.settings-group { border-bottom:1px solid var(--border); padding:10px 0; }
+.settings-group h4 { margin:0 0 8px; color:var(--bright); }
+.settings-row { display:flex; align-items:center; gap:10px; margin:6px 0; }
+.settings-row label { flex:0 0 240px; color:var(--text); }
+.settings-row input[type=text], .settings-row input[type=number], .settings-row select { flex:1; }
+.settings-hint { color:var(--dim); font-size:11px; margin:2px 0 0 250px; }
+
+/* ---------- modal ---------- */
+.modal-bg { position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex;
+  align-items:center; justify-content:center; z-index:50; }
+.modal { background:var(--panel); border:1px solid var(--border2); border-radius:6px;
+  width:min(680px,92vw); max-height:80vh; display:flex; flex-direction:column; }
+.modal h3 { padding:10px 14px; margin:0; border-bottom:1px solid var(--border); color:var(--bright); }
+.modal .mbody { padding:12px 14px; overflow:auto; }
+.modal .mfoot { padding:10px 14px; border-top:1px solid var(--border); display:flex;
+  gap:8px; justify-content:flex-end; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ toolbar ============ -->
+  <div class="toolbar">
+    <button id="btnStart">● Start</button>
+    <button id="btnStop">■ Stop</button>
+    <button id="btnClear">Clear</button>
+    <span class="sep"></span>
+    <input id="filter" type="text" placeholder="filter URL (regex ok, e.g. api|graphql)" style="min-width:220px">
+    <select id="methodFilter">
+      <option value="">Method: all</option>
+      <option>GET</option><option>POST</option><option>PUT</option>
+      <option>PATCH</option><option>DELETE</option><option>HEAD</option>
+      <option>OPTIONS</option>
+    </select>
+    <select id="statusFilter">
+      <option value="">Status: all</option>
+      <option value="2">2xx</option><option value="3">3xx</option>
+      <option value="4">4xx</option><option value="5">5xx</option>
+    </select>
+    <select id="typeFilter">
+      <option value="">Type: all</option>
+      <option>json</option><option>html</option><option>xml</option>
+      <option>javascript</option><option>css</option><option>image</option><option>other</option>
+    </select>
+    <label title="only starred requests"><input type="checkbox" id="favOnly"> ★</label>
+    <button id="btnSettings" title="Settings">⚙ Settings</button>
+    <span id="flash"></span>
+  </div>
+
+  <div id="stats"></div>
+
+  <!-- ============ tabs ============ -->
+  <nav class="tabs">
+    <button data-tab="log" class="active">Requests</button>
+    <button data-tab="detail">Detail</button>
+    <button data-tab="curl">cURL / Export</button>
+    <button data-tab="har">HAR / Reports</button>
+    <button data-tab="stats">Stats</button>
+    <button data-tab="settings">Settings</button>
+  </nav>
+
+  <!-- ============ TAB: log ============ -->
+  <section id="tab-log" class="tab">
+    <div id="bulkBar" class="hidden">
+      <label title="select all filtered"><input type="checkbox" id="selAll"> all</label>
+      <span class="count" id="selCount">0 selected</span>
+      <span class="sep"></span>
+      <button id="btnCopySelCurl" class="mini">Copy cURL</button>
+      <button id="btnCopySelOpt" class="mini">Copy optimized</button>
+      <button id="btnCopySelHar" class="mini">Copy HAR</button>
+      <button id="btnDeleteSel" class="mini">Delete</button>
+      <span class="sep"></span>
+      <button id="btnCollapseDup" class="mini" title="collapse exact-duplicate URLs">Dedupe view</button>
+    </div>
+    <div id="logWrap">
+      <table id="log">
+        <thead><tr>
+          <th class="cell-check"></th>
+          <th class="cell-seq" data-key="seq">#<span class="arrow"></span></th>
+          <th data-key="method">Method<span class="arrow"></span></th>
+          <th data-key="status">Status<span class="arrow"></span></th>
+          <th data-key="type">Type</th>
+          <th data-key="host">Host<span class="arrow"></span></th>
+          <th data-key="path">Path</th>
+          <th data-key="size">Size<span class="arrow"></span></th>
+          <th data-key="time">Time<span class="arrow"></span></th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+    <div id="pager">
+      <button id="btnPrev">‹ Prev</button>
+      <span id="pageInfo">0 / 0</span>
+      <button id="btnNext">Next ›</button>
+      <span class="spacer"></span>
+      <label>page size
+        <select id="pageSize">
+          <option>100</option><option>250</option><option>500</option><option>1000</option>
+        </select>
+      </label>
+      <span id="liveBadge"></span>
+    </div>
+  </section>
+
+  <!-- ============ TAB: detail ============ -->
+  <section id="tab-detail" class="tab hidden">
+    <div id="detail">
+      <div class="dhead" id="dHead">
+        <h3 id="dTitle">Select a request</h3>
+        <div class="dmeta" id="dMeta"></div>
+      </div>
+      <div class="dtabs" id="dTabs">
+        <button data-dtab="overview" class="active">Overview</button>
+        <button data-dtab="request">Request</button>
+        <button data-dtab="response">Response</button>
+        <button data-dtab="curl">cURL</button>
+        <button data-dtab="raw">Raw</button>
+      </div>
+      <div id="dContent"></div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: cURL / export ============ -->
+  <section id="tab-curl" class="tab hidden">
+    <div class="export-toolbar">
+      <button id="btnCurlMode" class="primary">cURL standard</button>
+      <button id="btnCopyCurl">Copy cURL</button>
+      <button id="btnCopyFetch">Copy fetch()</button>
+      <button id="btnCopyPython">Copy Python</button>
+      <button id="btnCopyHttpie">Copy HTTPie</button>
+      <button id="btnCopyPowershell">Copy PowerShell</button>
+      <span class="sep"></span>
+      <label title="append --insecure"><input type="checkbox" id="optInsecure"> --insecure</label>
+      <label title="single line output"><input type="checkbox" id="optSingleLine"> single-line</label>
+      <label title="append --compressed"><input type="checkbox" id="optCompressed" checked> --compressed</label>
+    </div>
+    <textarea id="curlOutput" spellcheck="false" readonly></textarea>
+    <div class="opt-row">
+      <span style="color:var(--dim)">Generated from:</span>
+      <select id="curlSource">
+        <option value="selected">selected request</option>
+        <option value="filtered">all filtered requests</option>
+        <option value="all">all captured</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- ============ TAB: HAR / reports ============ -->
+  <section id="tab-har" class="tab hidden">
+    <div class="har-options">
+      <div class="card">
+        <h4>HAR 1.2 Export</h4>
+        <div class="opt-row"><label><input type="checkbox" id="harBodies" checked> include response bodies</label></div>
+        <div class="opt-row"><label><input type="checkbox" id="harBinary" checked> include base64 binary bodies</label></div>
+        <div class="opt-row"><label><input type="checkbox" id="harPretty" checked> pretty-print JSON</label></div>
+        <div class="opt-row"><label><input type="checkbox" id="harAuto" title="auto-download HAR when capture stops"> auto-save HAR on stop</label></div>
+        <div class="opt-row" style="margin-top:8px">
+          <button id="btnHarDownload" class="primary">Download HAR</button>
+          <button id="btnHarDownloadFiltered">Download filtered HAR</button>
+          <button id="btnHarCopy">Copy HAR JSON</button>
+        </div>
+      </div>
+      <div class="card">
+        <h4>Reports & Snapshots</h4>
+        <div class="opt-row">
+          <button id="btnSaveJson">Save JSON snapshot</button>
+          <button id="btnSaveCsv">Save CSV</button>
+          <button id="btnSaveMd">Save Markdown report</button>
+          <button id="btnCopyMd">Copy Markdown</button>
+        </div>
+        <div class="opt-row" style="margin-top:6px">
+          <button id="btnRestore">Restore last snapshot</button>
+          <span style="color:var(--dim)">(restores URL/method/status metadata from localStorage)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: stats ============ -->
+  <section id="tab-stats" class="tab hidden">
+    <div id="statsGrid"></div>
+    <div style="padding:0 10px 10px; display:grid; grid-template-columns:1fr 1fr; gap:10px">
+      <div class="card"><h4>Methods</h4><div id="statMethods"></div></div>
+      <div class="card"><h4>Status codes</h4><div id="statStatuses"></div></div>
+      <div class="card"><h4>Top hosts</h4><div id="statHosts"></div></div>
+      <div class="card"><h4>Slowest requests (top 10)</h4><div id="statSlow"></div></div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: settings ============ -->
+  <section id="tab-settings" class="tab hidden">
+    <form id="settingsForm">
+      <div class="settings-group">
+        <h4>Capture</h4>
+        <div class="settings-row"><label>Auto-start recording on open</label>
+          <input type="checkbox" id="setAutoStart" checked></div>
+        <div class="settings-row"><label>Max entries kept</label>
+          <input type="number" id="setMaxEntries" min="100" max="100000" value="10000"></div>
+        <div class="settings-row"><label>Deduplicate identical requests</label>
+          <input type="checkbox" id="setDedupe"></div>
+        <div class="settings-row"><label>Auto-scroll to newest</label>
+          <input type="checkbox" id="setAutoScroll" checked></div>
+        <div class="settings-row"><label>Host whitelist (regex, empty = all)</label>
+          <input type="text" id="setHostWhitelist" placeholder="example\.com|api\."></div>
+        <div class="settings-row"><label>Host blacklist (regex)</label>
+          <input type="text" id="setHostBlacklist" placeholder="google-analytics|doubleclick"></div>
+      </div>
+      <div class="settings-group">
+        <h4>cURL generation</h4>
+        <div class="settings-row"><label>Noise headers to skip (comma sep)</label>
+          <input type="text" id="setSkipHeaders" value="accept-encoding,content-length,sec-ch-ua,sec-ch-ua-mobile,sec-ch-ua-platform,sec-fetch-dest,sec-fetch-mode,sec-fetch-site,sec-fetch-user,priority"></div>
+        <div class="settings-row"><label>Keep only these headers when "optimized" (comma sep, empty = keep all non-noise)</label>
+          <input type="text" id="setOptHeaders" value="authorization,cookie,content-type,accept,accept-language,x-api-key,x-auth-token,x-csrf-token,referer,origin,user-agent,x-requested-with"></div>
+        <div class="settings-row"><label>Default --insecure</label><input type="checkbox" id="setInsecure"></div>
+        <div class="settings-row"><label>Default single-line output</label><input type="checkbox" id="setSingleLine"></div>
+      </div>
+      <div class="settings-group">
+        <h4>Deep search</h4>
+        <div class="settings-row"><label>Cache response bodies for search (memory heavy)</label>
+          <input type="checkbox" id="setBodyCache"></div>
+        <div class="settings-row"><label>Max body chars cached per request</label>
+          <input type="number" id="setBodyCacheMax" min="1000" max="1000000" value="50000"></div>
+      </div>
+      <div class="settings-group">
+        <h4>Danger zone</h4>
+        <div class="settings-row"><label>Clear all saved settings & snapshots</label>
+          <button type="button" id="btnWipe">Wipe localStorage</button></div>
+      </div>
+      <div style="padding:10px 0"><button type="button" id="btnSaveSettings" class="primary">Save settings</button>
+        <span id="settingsMsg" style="margin-left:10px;color:var(--good)"></span></div>
+    </form>
+  </section>
+
+  <!-- ============ deep search modal ============ -->
+  <div id="searchModal" class="modal-bg hidden">
+    <div class="modal">
+      <h3>Deep search captured bodies</h3>
+      <div class="mbody">
+        <div class="search-bar">
+          <input id="deepQuery" type="text" placeholder="regex or plain text, e.g. accessToken|apiKey">
+          <button id="btnDeepRun" class="primary">Search</button>
+        </div>
+        <div id="deepResults" style="max-height:40vh;overflow:auto"></div>
+      </div>
+      <div class="mfoot"><button id="btnDeepClose">Close</button></div>
+    </div>
+  </div>
+
+</div>
+<script src="panel.js"></script>
+</body>
+</html>
