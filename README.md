@@ -244,8 +244,8 @@ MIT License — See [LICENSE](LICENSE) for details.
 
 ##  Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/api-sniffer-pro/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/api-sniffer-pro/discussions)
+- **Issues**: [GitHub Issues](https://github.com/balax-24/API_Sniffer/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/balax-24/API_Sniffer/discussions)
 
 ---
 
