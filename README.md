@@ -43,7 +43,7 @@ Designed for **authorized testing, API development, security research, and debug
 - **Selected batch replay** — Replay multiple requests sequentially
 - **cURL copy-to-clipboard** — Instant terminal-ready commands
 
-### ��� Advanced Controls
+###  Advanced Controls
 - **Deduplication view** — Collapse identical requests (same method + URL)
 - **Favorites/Stars** — Mark important requests for quick access
 - **Multi-select with bulk actions** — Copy, export, delete multiple entries
@@ -57,7 +57,7 @@ Designed for **authorized testing, API development, security research, and debug
 - Average/median/min/max latency
 - Timeline sparkline visualization
 
-### ��� Keyboard Shortcuts
+###  Keyboard Shortcuts
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl/Cmd + F` | Focus filter input |
@@ -91,7 +91,7 @@ Designed for **authorized testing, API development, security research, and debug
 
 ### Capturing Requests
 - **Start/Stop** — Click the green  Start / red ■ Stop buttons
-- **Clear** — ��� Clear removes all captured entries
+- **Clear** —  Clear removes all captured entries
 - **Filter** — Type in the filter box (supports regex: `api\/v\d+`)
 - **Domain filter** — Quick-filter by domain via the dropdown
 
@@ -116,7 +116,7 @@ Designed for **authorized testing, API development, security research, and debug
 4. Click a result to jump to that request
 
 ### Replay
-- **Detail tab** → **�� Replay** button re-fires the exact request
+- **Detail tab** → ** Replay** button re-fires the exact request
 - **Bulk bar** (appears when multi-selecting) → **Replay Selected**
 
 ### Favorites
@@ -124,17 +124,17 @@ Designed for **authorized testing, API development, security research, and debug
 - Filter to "★ Only" via the filter dropdown
 ---
 
-## � Configuration (Settings Tab)
+##  Configuration (Settings Tab)
 
-Access via **� Settings** button or press `6`.
+Access via ** Settings** button or press `6`.
 
 ### Capture Settings
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Auto-start recording | �� On | Begin capturing immediately when panel opens |
+| Auto-start recording |  On | Begin capturing immediately when panel opens |
 | Max entries kept | 10,000 | Memory cap — oldest entries dropped first |
 | Deduplicate identical requests | Off | Skip logging if method+URL+body match recent entry |
-| Auto-scroll to newest | �� On | Keep view pinned to latest request |
+| Auto-scroll to newest |  On | Keep view pinned to latest request |
 | Host whitelist (regex) | Empty | Only capture matching hosts (e.g., `api\.|example\.com`) |
 | Host blacklist (regex) | Empty | Exclude matching hosts (e.g., `google-analytics|doubleclick`) |
 
@@ -156,7 +156,7 @@ Access via **� Settings** button or press `6`.
 - **Wipe localStorage** — Clears all settings, favorites, and snapshots
 ---
 
-## ��� Project Structure
+##  Project Structure
 
 ```
 v2/
@@ -164,7 +164,7 @@ v2/
 ├── devtools.html      # DevTools entry point
 ├── devtools.js        # Panel registration
 ├── panel.html         # Main panel UI (HTML + embedded CSS)
-��── panel.js           # Core logic (capture, UI, export, search, replay)
+── panel.js           # Core logic (capture, UI, export, search, replay)
 ```
 
 ### Key Technical Details
@@ -176,7 +176,7 @@ v2/
 
 ---
 
-## � Development
+##  Development
 
 ### Prerequisites
 - Chrome/Chromium 88+
@@ -195,13 +195,13 @@ v2/
 
 ---
 
-## ��� Security & Ethics
+##  Security & Ethics
 
-> **� Important**: This tool captures **all** network traffic including authentication tokens, cookies, and sensitive data.
+> ** Important**: This tool captures **all** network traffic including authentication tokens, cookies, and sensitive data.
 
 - **Use only on systems you own or have explicit authorization to test**
 - **Never share HAR files or cURL commands containing secrets** without redacting them
-- **Clear captured data** after testing sessions (�� Clear button)
+- **Clear captured data** after testing sessions ( Clear button)
 - **Disable body caching** when not actively searching to minimize memory exposure
 - **Host blacklist** can exclude known tracking/analytics domains
 
@@ -209,13 +209,13 @@ The extension runs entirely locally — **no data leaves your browser**.
 
 ---
 
-## ��� License
+##  License
 
 MIT License — See [LICENSE](LICENSE) for details.
 
 ---
 
-## ��� Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -234,7 +234,7 @@ MIT License — See [LICENSE](LICENSE) for details.
 
 ---
 
-## ��� Acknowledgments
+##  Acknowledgments
 
 - Chrome DevTools Protocol & Extensions APIs
 - HAR 1.2 Specification
@@ -242,7 +242,7 @@ MIT License — See [LICENSE](LICENSE) for details.
 
 ---
 
-## ��� Support
+##  Support
 
 - **Issues**: [GitHub Issues](https://github.com/yourusername/api-sniffer-pro/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/api-sniffer-pro/discussions)
