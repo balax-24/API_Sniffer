@@ -8,7 +8,7 @@
 
 ---
 
-## ����� Overview
+##  Overview
 
 **API Sniffer Pro** is a powerful Chrome DevTools extension that transforms your browser into a professional API debugging and discovery tool. Built as a DevTools panel, it captures every network request in real-time and provides rich inspection, export, and analysis capabilities — all without leaving the browser.
 
@@ -16,16 +16,16 @@ Designed for **authorized testing, API development, security research, and debug
 
 ---
 
-## ���� Features
+##  Features
 
-### ����� Live Capture & Inspection
+###  Live Capture & Inspection
 - **Real-time request logging** — See every XHR/fetch/WebSocket request as it happens
 - **Smart filtering** — Filter by method, status, URL, domain, or custom regex
 - **Sorting & pagination** — Sort by any column (sequence, method, status, domain, path, size, time) with 250-row pages
 - **Request details panel** — Full request/response headers, query params, cookies, and formatted JSON bodies
 - **Syntax highlighting** — Color-coded status codes, methods, and JSON
 
-### ����� Export & Code Generation
+###  Export & Code Generation
 | Format | Description |
 |--------|-------------|
 | **cURL (Standard)** | Full faithful reproduction with all headers |
@@ -33,17 +33,17 @@ Designed for **authorized testing, API development, security research, and debug
 | **HAR 1.2** | Industry-standard archive format for sharing & tooling |
 | **Multi-language** | Python (`requests`/`httpx`), Node (`fetch`/`axios`), Go, Java (`OkHttp`), C# (`HttpClient`), PowerShell, Rust (`reqwest`), PHP, Ruby, Swift (`URLSession`), Kotlin (`khttp`), Dart (`http`), R (`httr`) |
 
-### ����� Deep Search
+###  Deep Search
 - Search **URLs** and **cached response bodies** via regex or plain text
 - Configurable body caching (up to 1MB per request)
 - Jump directly to matching requests
 
-### ����� Replay & Testing
+###  Replay & Testing
 - **Single request replay** — Re-fire any captured request with one click
 - **Selected batch replay** — Replay multiple requests sequentially
 - **cURL copy-to-clipboard** — Instant terminal-ready commands
 
-### �������� Advanced Controls
+### ��� Advanced Controls
 - **Deduplication view** — Collapse identical requests (same method + URL)
 - **Favorites/Stars** — Mark important requests for quick access
 - **Multi-select with bulk actions** — Copy, export, delete multiple entries
@@ -51,13 +51,13 @@ Designed for **authorized testing, API development, security research, and debug
 - **Auto-scroll & auto-start** — Hands-free capture sessions
 - **Settings persistence** — All preferences saved to `localStorage`
 
-### ����� Statistics Dashboard
+###  Statistics Dashboard
 - Request counts by method, status class (2xx/3xx/4xx/5xx)
 - Domain breakdown, total bytes transferred
 - Average/median/min/max latency
 - Timeline sparkline visualization
 
-### �������� Keyboard Shortcuts
+### ��� Keyboard Shortcuts
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl/Cmd + F` | Focus filter input |
@@ -68,7 +68,7 @@ Designed for **authorized testing, API development, security research, and debug
 
 ---
 
-## ����� Installation
+##  Installation
 
 ### Option 1: Load Unpacked (Development)
 1. Open Chrome and navigate to `chrome://extensions/`
@@ -81,7 +81,7 @@ Designed for **authorized testing, API development, security research, and debug
 *Packaged release will be published to the Chrome Web Store.*
 ---
 
-## ����� Usage Guide
+##  Usage Guide
 
 ### Getting Started
 1. Open DevTools (`F12` or `Ctrl+Shift+I`)
@@ -90,8 +90,8 @@ Designed for **authorized testing, API development, security research, and debug
 4. The panel opens — recording starts automatically (configurable in Settings)
 
 ### Capturing Requests
-- **Start/Stop** — Click the green ���� Start / red ■ Stop buttons
-- **Clear** — �������� Clear removes all captured entries
+- **Start/Stop** — Click the green  Start / red ■ Stop buttons
+- **Clear** — ��� Clear removes all captured entries
 - **Filter** — Type in the filter box (supports regex: `api\/v\d+`)
 - **Domain filter** — Quick-filter by domain via the dropdown
 
@@ -110,7 +110,7 @@ Designed for **authorized testing, API development, security research, and debug
 | **Code** | — | 15+ language snippets via the **Code** button in Detail |
 
 ### Deep Search
-1. Click **���� Search** in the toolbar
+1. Click ** Search** in the toolbar
 2. Enter regex or plain text (e.g., `accessToken\|apiKey\|Bearer`)
 3. Results show URL matches and body matches (if body caching enabled)
 4. Click a result to jump to that request
@@ -124,9 +124,9 @@ Designed for **authorized testing, API development, security research, and debug
 - Filter to "★ Only" via the filter dropdown
 ---
 
-## ������ Configuration (Settings Tab)
+## � Configuration (Settings Tab)
 
-Access via **������ Settings** button or press `6`.
+Access via **� Settings** button or press `6`.
 
 ### Capture Settings
 | Setting | Default | Description |
@@ -176,7 +176,7 @@ v2/
 
 ---
 
-## ������ Development
+## � Development
 
 ### Prerequisites
 - Chrome/Chromium 88+
@@ -197,11 +197,11 @@ v2/
 
 ## ��� Security & Ethics
 
-> **������ Important**: This tool captures **all** network traffic including authentication tokens, cookies, and sensitive data.
+> **� Important**: This tool captures **all** network traffic including authentication tokens, cookies, and sensitive data.
 
 - **Use only on systems you own or have explicit authorization to test**
 - **Never share HAR files or cURL commands containing secrets** without redacting them
-- **Clear captured data** after testing sessions (������� Clear button)
+- **Clear captured data** after testing sessions (�� Clear button)
 - **Disable body caching** when not actively searching to minimize memory exposure
 - **Host blacklist** can exclude known tracking/analytics domains
 
@@ -250,5 +250,5 @@ MIT License — See [LICENSE](LICENSE) for details.
 ---
 
 <p align="center">
-  <strong>Made with ������ for API developers and security researchers</strong>
+  <strong>Made with ❤️ for API developers and security researchers</strong>
 </p>
